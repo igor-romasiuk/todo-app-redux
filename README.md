@@ -1,8 +1,20 @@
-# React + Vite
+# Todo App with Redux Toolkit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive Todo application built with React and Redux Toolkit. This project demonstrates state management using Redux and includes features like persistent storage.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Add, remove, and update todos
+- Mark todos as completed with animated checkboxes
+- Persistent storage using localStorage
+- Modern UI with animations and transitions
+- Fully responsive design
+- State management with Redux Toolkit
+
+## Technologies Used
+
+- React
+- Redux Toolkit
+- CSS3 with animations
+- localStorage for data persistence
+- Vite for build tooling
