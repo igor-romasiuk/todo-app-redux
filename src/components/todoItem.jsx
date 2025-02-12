@@ -1,31 +1,74 @@
-import { useDispatch } from "react-redux";
-import { removeTodo, toggleTodo, updateTodo } from "../redux/slices/todoSlice";
+import { useState, useEffect, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { updateTodoAsync, deleteTodoAsync } from '../redux/slices/todoSlice'
+import debounce from 'lodash/debounce'
 
-export default function TodoItem({ todo }) {
+function TodoItem({ todo }) {
     const dispatch = useDispatch()
+    const [text, setText] = useState(todo.title)
+    const [isEditing, setIsEditing] = useState(false)
+
+    const debouncedUpdate = useCallback(
+        debounce((id, newText) => {
+            dispatch(updateTodoAsync({
+                id,
+                updates: { title: newText }
+            }))
+        }, 800),
+        [dispatch]
+    )
+
+    useEffect(() => {
+        setText(todo.title)
+    }, [todo.title])
+
+    const handleTextChange = (e) => {
+        const newText = e.target.value
+        setText(newText)
+        if (newText.trim() !== todo.title) {
+            debouncedUpdate(todo.id, newText)
+        }
+    }
+
+    const handleToggle = () => {
+        dispatch(updateTodoAsync({
+            id: todo.id,
+            updates: { completed: !todo.completed }
+        }))
+    }
+
+    const handleDelete = () => {
+        dispatch(deleteTodoAsync(todo.id))
+    }
 
     return (
-        <li id={todo.id} className={todo.completed ? 'completed' : ''}>
-            <input 
+        <div className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+            <input
                 type="checkbox"
-                className="checkbox"
+                id={`todo-${todo.id}`}
+                name={`todo-${todo.id}`}
                 checked={todo.completed}
-                onChange={() => dispatch(toggleTodo({
-                    id: todo.id,
-                    completed: !todo.completed
-                }))}
+                onChange={handleToggle}
+                className="checkbox"
             />
-
-            <input type="text"
-             className={todo.completed ? 'completed' : ''}
-             value={todo.text}
-             onChange={(e) => dispatch(updateTodo({
-                id: todo.id,
-                text: e.target.value
-            }))} 
+            <input
+                type="text"
+                id={`todo-text-${todo.id}`}
+                name={`todo-text-${todo.id}`}
+                value={text}
+                onChange={handleTextChange}
+                onFocus={() => setIsEditing(true)}
+                onBlur={() => setIsEditing(false)}
+                className={`todo-text ${isEditing ? 'editing' : ''} ${todo.completed ? 'completed' : ''}`}
             />
-
-            <button onClick={() => dispatch(removeTodo(todo.id))}>Remove</button>
-        </li>
+            <button 
+                onClick={handleDelete}
+                className="delete-btn"
+            >
+                Видалити
+            </button>
+        </div>
     )
 }
+
+export default TodoItem
